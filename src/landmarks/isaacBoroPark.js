@@ -53,7 +53,7 @@ function buildAmphitheatre(group, x, z) {
   const mat = new THREE.MeshLambertMaterial({ color: 0xb8b0a0 });
   // Tiered seating semicircle
   for (let tier = 0; tier < 4; tier++) {
-    const tierGeo = new THREE.CylinderGeometry(3 + tier * 2, 3 + tier * 2, 0.4, 16, 1, false, 0, Math.PI);
+    const tierGeo = new THREE.CylinderGeometry(3 + tier * 2, 3 + tier * 2, 0.4, 10, 1, false, 0, Math.PI);
     const tierMesh = new THREE.Mesh(tierGeo, mat);
     tierMesh.position.set(x, tier * 0.5, z);
     group.add(tierMesh);

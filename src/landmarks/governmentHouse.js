@@ -15,10 +15,10 @@ export function buildGovernmentHouse(landmark) {
   group.add(garden);
 
   // Fountain at entrance
-  const fGeo = new THREE.CylinderGeometry(3.5, 3.8, 0.35, 20);
+  const fGeo = new THREE.CylinderGeometry(3.5, 3.8, 0.35, 10);
   const fountain = new THREE.Mesh(fGeo, new THREE.MeshLambertMaterial({ color: 0xb8a888 }));
   fountain.position.set(0, 0.18, 22);
-  const water = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.2, 20), new THREE.MeshLambertMaterial({ color: 0x2060a0, transparent: true, opacity: 0.8 }));
+  const water = new THREE.Mesh(new THREE.CylinderGeometry(3.2, 3.2, 0.2, 10), new THREE.MeshLambertMaterial({ color: 0x2060a0, transparent: true, opacity: 0.8 }));
   water.position.set(0, 0.28, 22);
   group.add(fountain, water);
 

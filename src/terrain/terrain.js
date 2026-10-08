@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { COLORS, CITY_BOUNDS } from '../utils/constants.js';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 // Build base terrain: ground plane, rivers, waterways
 export function buildTerrain(scene) {
@@ -44,7 +45,7 @@ function buildRiver(parent, points2d, width) {
   const path = new THREE.CatmullRomCurve3(
     points2d.map(([x, z]) => new THREE.Vector3(x, -0.05, z))
   );
-  const tubeGeo = new THREE.TubeGeometry(path, 24, width / 2, 4, false);
+  const tubeGeo = new THREE.TubeGeometry(path, PROFILE.isMobile ? 8 : 24, width / 2, 3, false);
   const waterMat = new THREE.MeshLambertMaterial({
     color: COLORS.water,
     transparent: true,

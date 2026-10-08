@@ -55,7 +55,7 @@ function buildControlTower(group, x, z) {
   const cab = makeBox(10, 4, 10, 0x9ab8cc);
   cab.position.set(x, 18, z);
   // Radar disc
-  const radarGeo = new THREE.CylinderGeometry(1.8, 1.8, 0.3, 16);
+  const radarGeo = new THREE.CylinderGeometry(1.8, 1.8, 0.3, 8);
   const radar = new THREE.Mesh(radarGeo, new THREE.MeshLambertMaterial({ color: 0x606870 }));
   radar.position.set(x, 21, z);
   radar.name = 'radar';
@@ -104,7 +104,7 @@ function buildStaticAircraft(group, x, z, ry) {
   const g = new THREE.Group();
   // Fuselage
   const fuse = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.2, 2.0, 38, 10),
+    new THREE.CylinderGeometry(2.2, 2.0, 38, 7),
     new THREE.MeshLambertMaterial({ color: 0xf0f0ee })
   );
   fuse.rotation.z = Math.PI / 2;

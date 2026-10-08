@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { buildCamry, buildGWagon, buildCybertruck, buildHilux, buildCorolla, buildTaxi, buildBus, buildTruck } from './carModels.js';
 import { COLORS } from '../utils/constants.js';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 const BUILDERS = {
   camry: () => buildCamry([0xf0f0ec, 0xb8bcc0, 0x202428, 0xa02020, 0x204080][Math.floor(Math.random() * 5)]),
@@ -26,8 +27,8 @@ export function buildAllVehicles(scene, routes, parkingLots) {
         vehicles.push(car);
       }
     });
-    // Add extra random traffic
-    for (let extra = 0; extra < 2; extra++) {
+    // Add extra random traffic (none on mobile)
+    for (let extra = 0; extra < PROFILE.vehicleRouteExtras; extra++) {
       const type = route.vehicleTypes[Math.floor(Math.random() * route.vehicleTypes.length)];
       const car = spawnRouteVehicle(type, route, Math.random());
       if (car) {
@@ -37,9 +38,12 @@ export function buildAllVehicles(scene, routes, parkingLots) {
     }
   });
 
-  // Parked cars in lots
+  // Parked cars in lots (heavily reduced on mobile)
   parkingLots.forEach(lot => {
-    spawnParkedCars(scene, lot);
+    const scaledLot = PROFILE.parkingSlotMultiplier < 1
+      ? { ...lot, slots: Math.max(1, Math.ceil(lot.slots * PROFILE.parkingSlotMultiplier)) }
+      : lot;
+    spawnParkedCars(scene, scaledLot);
   });
 
   return vehicles;

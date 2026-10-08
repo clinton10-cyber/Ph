@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { ROADS, INTERSECTIONS } from '../data/roadsData.js';
 import { COLORS, CURB_HEIGHT, SIDEWALK_HEIGHT, SIDEWALK_WIDTH } from '../utils/constants.js';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 export function buildRoads(scene) {
   const group = new THREE.Group();
@@ -23,7 +24,7 @@ function buildRoadSegment(parent, road) {
   const curve = new THREE.CatmullRomCurve3(pts);
 
   const w = road.width;
-  const segments = pts.length * 8;
+  const segments = Math.max(4, Math.ceil((pts.length * 8) / PROFILE.roadSegmentDivisor));
 
   // Road surface
   const geo = new THREE.TubeGeometry(curve, segments, w / 2, 2, false);
@@ -92,7 +93,7 @@ function buildIntersection(parent, inter) {
     parent.add(disc);
 
     // Central island
-    const islandGeo = new THREE.CylinderGeometry(r, r, 0.3, 32);
+    const islandGeo = new THREE.CylinderGeometry(r, r, 0.3, PROFILE.isMobile ? 10 : 20);
     const islandMat = new THREE.MeshLambertMaterial({ color: COLORS.grass });
     const island = new THREE.Mesh(islandGeo, islandMat);
     island.position.set(pos.x, 0.15, pos.z);

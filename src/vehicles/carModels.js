@@ -3,9 +3,11 @@ import { makeBox, makeCylinder } from '../utils/helpers.js';
 import { COLORS } from '../utils/constants.js';
 
 // Shared wheel geometry
-const WHEEL_GEO = new THREE.CylinderGeometry(0.34, 0.34, 0.24, 14);
+import { PROFILE } from '../utils/deviceProfile.js';
+const _ws = PROFILE.cylinderDetail; // 5 on mobile, 8 on desktop
+const WHEEL_GEO = new THREE.CylinderGeometry(0.34, 0.34, 0.24, _ws);
 const WHEEL_MAT = new THREE.MeshLambertMaterial({ color: 0x181818 });
-const RIM_GEO = new THREE.CylinderGeometry(0.22, 0.22, 0.26, 8);
+const RIM_GEO = new THREE.CylinderGeometry(0.22, 0.22, 0.26, _ws);
 const RIM_MAT = new THREE.MeshLambertMaterial({ color: 0xb8bcc8 });
 const GLASS_MAT = new THREE.MeshLambertMaterial({ color: 0x6090b0, transparent: true, opacity: 0.55 });
 const HEADLIGHT_MAT = new THREE.MeshLambertMaterial({ color: 0xf8f8ee, emissive: 0xf8f8ee, emissiveIntensity: 0.0 });

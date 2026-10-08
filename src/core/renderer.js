@@ -1,15 +1,16 @@
 import * as THREE from 'three';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 export function createRenderer(canvas) {
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: window.devicePixelRatio < 2, // skip AA on high-DPI screens (they don't need it)
+    antialias: PROFILE.antialias,
     powerPreference: 'high-performance'
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // cap at 1.5, not 2
+  renderer.setPixelRatio(PROFILE.pixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap; // PCFSoft is ~2x slower than PCF
+  renderer.shadowMap.enabled = PROFILE.shadowsEnabled;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;

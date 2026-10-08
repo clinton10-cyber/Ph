@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { COLORS } from '../utils/constants.js';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 // Shared geometries for instancing
 let _trunkGeo, _canopyGeo, _palmTrunkGeo, _palmFrondGeo;
@@ -27,15 +28,18 @@ export function buildVegetation(scene) {
   const palmFrondMat = new THREE.MeshLambertMaterial({ color: 0x286040 });
 
   // Street trees along roads (instanced for performance)
-  const streetTreePositions = generateStreetTreePositions();
+  const trim = arr => {
+    const n = Math.ceil(arr.length * PROFILE.treeCount);
+    return arr.slice(0, n);
+  };
+
+  const streetTreePositions = trim(generateStreetTreePositions());
   buildInstancedTrees(group, streetTreePositions, _trunkGeo, trunkMat, _canopyGeo, canopyMat);
 
-  // Park trees - denser clusters
-  const parkPositions = generateParkTreePositions();
+  const parkPositions = trim(generateParkTreePositions());
   buildInstancedTrees(group, parkPositions, _trunkGeo, trunkMat, _canopyGeo, canopyMat2);
 
-  // Beach palm trees
-  const palmPositions = generatePalmPositions();
+  const palmPositions = trim(generatePalmPositions());
   buildPalms(group, palmPositions, _palmTrunkGeo, palmTrunkMat, _palmFrondGeo, palmFrondMat);
 
   scene.add(group);

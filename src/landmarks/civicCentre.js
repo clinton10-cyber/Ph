@@ -38,7 +38,7 @@ function buildEventHall(group, x, y, z) {
   const stage = makeBox(20, 0.5, 5, 0x8a6840);
   stage.position.set(x, y, z - 12);
   // Chandelier approximation
-  const chandelier = new THREE.Mesh(new THREE.SphereGeometry(1.0, 12, 8), new THREE.MeshLambertMaterial({ color: 0xf0e090, emissive: 0xf0e090, emissiveIntensity: 0.3 }));
+  const chandelier = new THREE.Mesh(new THREE.SphereGeometry(1.0, 6, 4), new THREE.MeshLambertMaterial({ color: 0xf0e090, emissive: 0xf0e090, emissiveIntensity: 0.3 }));
   chandelier.position.set(x, y + FLOOR_HEIGHT - 0.5, z);
   group.add(stage, chandelier);
 }

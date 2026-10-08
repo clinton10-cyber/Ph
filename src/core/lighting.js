@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { COLORS } from '../utils/constants.js';
+import { PROFILE } from '../utils/deviceProfile.js';
 
 export function createLighting(scene) {
   const lights = {};
@@ -12,7 +13,7 @@ export function createLighting(scene) {
   lights.sun = new THREE.DirectionalLight(COLORS.light_warm, 2.0);
   lights.sun.position.set(200, 300, 100);
   lights.sun.castShadow = true;
-  lights.sun.shadow.mapSize.set(1024, 1024); // 2048→1024: 4× less shadow memory & fill cost
+  lights.sun.shadow.mapSize.set(PROFILE.shadowMapSize, PROFILE.shadowMapSize);
   lights.sun.shadow.camera.near = 1;
   lights.sun.shadow.camera.far = 900;   // tighter far = better shadow precision
   lights.sun.shadow.camera.left = -400;

@@ -51,12 +51,12 @@ export function buildRefinery(landmark) {
 function buildStorageTank(group, x, z) {
   const h = 12 + Math.random() * 6;
   const r = 7 + Math.random() * 3;
-  const bodyGeo = new THREE.CylinderGeometry(r, r, h, 16);
+  const bodyGeo = new THREE.CylinderGeometry(r, r, h, 8);
   const body = new THREE.Mesh(bodyGeo, new THREE.MeshLambertMaterial({ color: 0x708090 }));
   body.position.set(x, h / 2, z);
   body.castShadow = true;
   const dome = new THREE.Mesh(
-    new THREE.SphereGeometry(r, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.SphereGeometry(r, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2),
     new THREE.MeshLambertMaterial({ color: 0x607080 })
   );
   dome.position.set(x, h, z);

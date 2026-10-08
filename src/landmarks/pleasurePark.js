@@ -53,10 +53,10 @@ function buildWalkways(group) {
 
 function buildFountain(group, x, z) {
   const mat = new THREE.MeshLambertMaterial({ color: 0xc8c0b0 });
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(5, 5.4, 0.4, 24), mat);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(5, 5.4, 0.4, 12), mat);
   base.position.set(x, 0.2, z);
   const pool = new THREE.Mesh(
-    new THREE.CylinderGeometry(4.6, 4.6, 0.5, 24),
+    new THREE.CylinderGeometry(4.6, 4.6, 0.5, 12),
     new THREE.MeshLambertMaterial({ color: 0x2060a0, transparent: true, opacity: 0.8 })
   );
   pool.position.set(x, 0.3, z);
