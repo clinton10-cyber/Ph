@@ -14,11 +14,14 @@ import { MinimapRenderer } from './src/map/mapCanvas.js';
 import { HUD } from './src/ui/hud.js';
 import { InteractionManager } from './src/ui/interaction.js';
 import { CameraTween } from './src/utils/helpers.js';
-import { VEHICLE_ROUTES } from './src/data/vehicleRoutesData.js';
-import { PARKING_LOTS } from './src/data/vehicleRoutesData.js';
+import { VEHICLE_ROUTES, PARKING_LOTS } from './src/data/vehicleRoutesData.js';
 import { applyWindowEmissives } from './src/utils/nightUtils.js';
 
-// --- Boot sequence ---
+// Yield to the browser so the loading bar actually paints between steps
+function frame() {
+  return new Promise(resolve => requestAnimationFrame(resolve));
+}
+
 async function init() {
   const canvas = document.getElementById('city-canvas');
   const scene = createScene();
@@ -35,47 +38,45 @@ async function init() {
 
   // HUD setup
   const hud = new HUD({
-    onFlyTo: (pos, lookAt) => {
-      tween.flyTo(pos, lookAt, 1.6);
-    },
+    onFlyTo: (pos, lookAt) => tween.flyTo(pos, lookAt, 1.6),
     onDayNight: (night) => {
       isNight = night;
       applyDayNight(lights, scene, night);
       applyWindowEmissives(scene, night);
     },
-    onOverview: () => {
-      tween.flyTo({ x: 0, y: 280, z: 320 }, { x: 0, y: 0, z: 0 }, 1.8);
-    },
-    onAudio: (on) => {
-      // Audio system placeholder
-    }
+    onOverview: () => tween.flyTo({ x: 0, y: 280, z: 320 }, { x: 0, y: 0, z: 0 }, 1.8),
+    onAudio: () => {}
   });
 
-  // Loading progress
+  // Each step: [label, progress 0-1, work fn]
+  // Using requestAnimationFrame between steps so the browser actually paints the bar.
   const steps = [
-    ['Building terrain...', 0.1],
-    ['Laying roads...', 0.22],
-    ['Planting vegetation...', 0.34],
-    ['Constructing landmarks...', 0.50],
-    ['Furnishing interiors...', 0.65],
-    ['Deploying vehicles...', 0.80],
-    ['Wiring systems...', 0.90],
-    ['City ready.', 1.0],
+    ['Building terrain...', 0.10, () => buildTerrain(scene)],
+    ['Laying roads...',     0.25, () => buildRoads(scene)],
+    ['Planting trees...',   0.40, () => buildVegetation(scene)],
+    ['Constructing landmarks...', 0.65, () => buildAllLandmarks(scene)],
+    ['Deploying vehicles...', 0.82, () => buildAllVehicles(scene, VEHICLE_ROUTES, PARKING_LOTS)],
+    ['Wiring city systems...', 0.95, () => null],
+    ['City ready.',         1.00, () => null],
   ];
 
-  for (const [status, progress] of steps) {
-    hud.updateLoadingProgress(progress, status);
-    await tick(32);
+  let landmarkMeshes = {};
+  let vehicleList = [];
+
+  for (const [label, progress, work] of steps) {
+    hud.updateLoadingProgress(progress, label);
+    // Yield BEFORE the work so the progress bar paints
+    await frame();
+    const result = work();
+    if (label.startsWith('Constructing')) landmarkMeshes = result || {};
+    if (label.startsWith('Deploying'))    vehicleList = result || [];
+    // Yield AFTER the work so browser stays responsive
+    await frame();
   }
 
-  // Build world
-  buildTerrain(scene);
-  buildRoads(scene);
-  buildVegetation(scene);
+  vehicles = vehicleList;
 
-  const landmarkMeshes = buildAllLandmarks(scene);
-
-  // Set all landmark groups interactive
+  // Wire landmark interactivity
   Object.entries(landmarkMeshes).forEach(([id, group]) => {
     group.userData.landmarkId = id;
     group.traverse(child => {
@@ -83,9 +84,7 @@ async function init() {
     });
   });
 
-  vehicles = buildAllVehicles(scene, VEHICLE_ROUTES, PARKING_LOTS);
-
-  // Interaction
+  // Interaction manager
   const interaction = new InteractionManager(camera, renderer, scene, hud);
   interaction.setLandmarkMeshes(landmarkMeshes);
 
@@ -102,13 +101,9 @@ async function init() {
       1.6
     );
   };
-
-  // Wire minimap HUD fly-to from info panel
   hud.onFlyTo = (pos, lookAt) => tween.flyTo(pos, lookAt, 1.6);
 
-  hud.hideLoadingScreen();
-
-  // --- Cache animated objects ONCE after world is built (avoid per-frame traverse) ---
+  // Cache animated objects once — avoids scene.traverse every frame
   const radarMeshes = [];
   const flareMeshes = [];
   const craneTrolleys = [];
@@ -118,26 +113,24 @@ async function init() {
     else if (child.name === 'crane-trolley') craneTrolleys.push(child);
   });
 
-  // Animated elements state
-  let radarAngle = 0;
-  let flareScale = 1;
-  let flareDir = 1;
-  let craneX = 0;
-  let craneDir = 1;
+  hud.hideLoadingScreen();
 
-  // Main loop
+  // Animated state
+  let radarAngle = 0;
+  let flareScale = 1, flareDir = 1;
+  let craneX = 0, craneDir = 1;
+  const _camDir = new THREE.Vector3();
+
   startAnimationLoop(renderer, scene, camera, controls, (delta, elapsed) => {
     hud.tick(delta);
     tween.update(delta);
-
-    // Update vehicles
     updateVehicles(vehicles, delta, isNight);
 
-    // Animate radar dishes (cached — no traverse)
+    // Radar
     radarAngle += delta * 0.6;
     for (let i = 0; i < radarMeshes.length; i++) radarMeshes[i].rotation.y = radarAngle;
 
-    // Animate flare flame (cached — no traverse)
+    // Flare flame
     flareScale += flareDir * delta * 1.2;
     if (flareScale > 1.3 || flareScale < 0.7) flareDir *= -1;
     for (let i = 0; i < flareMeshes.length; i++) {
@@ -145,7 +138,7 @@ async function init() {
       flareMeshes[i].position.y = 31.5 + Math.sin(elapsed * 4) * 0.3;
     }
 
-    // Animate crane trolleys (cached — no traverse)
+    // Crane trolleys
     craneX += craneDir * delta * 3;
     if (craneX > 10 || craneX < -10) craneDir *= -1;
     for (let i = 0; i < craneTrolleys.length; i++) {
@@ -153,22 +146,18 @@ async function init() {
       t.position.x = t.parent ? t.parent.position.x + craneX : craneX;
     }
 
-    // Update minimap every 6 frames (cheap canvas 2D, but no need to run every frame)
+    // Minimap (every 6 frames)
     minimapFrameCount = (minimapFrameCount + 1) % 6;
-    if (minimapFrameCount === 0) {
-      minimap.render(camera.position);
-    }
+    if (minimapFrameCount === 0) minimap.render(camera.position);
 
-    // Update compass
-    const camDir = new THREE.Vector3();
-    camera.getWorldDirection(camDir);
-    hud.updateCompass(Math.atan2(camDir.x, camDir.z));
+    // Compass
+    camera.getWorldDirection(_camDir);
+    hud.updateCompass(Math.atan2(_camDir.x, _camDir.z));
   });
 }
 
-// Async yield helper
-function tick(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-init().catch(console.error);
+init().catch(err => {
+  console.error('City failed to load:', err);
+  const s = document.getElementById('loader-status');
+  if (s) s.textContent = 'Error: ' + (err.message || err);
+});
