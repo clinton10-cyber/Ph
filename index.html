@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Port Harcourt 3D City</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="loading-screen">
+    <div class="loader-inner">
+      <div class="loader-city-name">PORT HARCOURT</div>
+      <div class="loader-subtitle">Rivers State, Nigeria</div>
+      <div class="loader-bar-wrap">
+        <div class="loader-bar" id="loader-bar"></div>
+      </div>
+      <div class="loader-status" id="loader-status">Initialising city engine...</div>
+    </div>
+  </div>
+
+  <canvas id="city-canvas"></canvas>
+
+  <div id="hud">
+    <div id="hud-top">
+      <div id="compass">
+        <div id="compass-needle"></div>
+        <span class="compass-n">N</span>
+      </div>
+      <div id="location-label">Port Harcourt City</div>
+      <div id="time-display">12:00</div>
+    </div>
+
+    <div id="hud-controls">
+      <button class="hud-btn" id="btn-overview" title="Bird's eye view">Overview</button>
+      <button class="hud-btn" id="btn-daynight" title="Toggle day/night">Day</button>
+      <button class="hud-btn" id="btn-map" title="Toggle map">Map</button>
+      <button class="hud-btn" id="btn-audio" title="Toggle audio">Audio Off</button>
+    </div>
+
+    <div id="search-bar">
+      <input type="text" id="search-input" placeholder="Search landmarks..." autocomplete="off" />
+      <div id="search-results"></div>
+    </div>
+  </div>
+
+  <div id="minimap-panel" class="hidden">
+    <div id="minimap-header">
+      <span>City Map</span>
+      <button id="minimap-close">x</button>
+    </div>
+    <canvas id="minimap-canvas"></canvas>
+    <div id="minimap-legend">
+      <span class="legend-dot landmark"></span>Landmark
+      <span class="legend-dot road"></span>Road
+      <span class="legend-dot water"></span>Water
+    </div>
+  </div>
+
+  <div id="info-panel" class="hidden">
+    <button id="info-close">x</button>
+    <div id="info-badge"></div>
+    <h2 id="info-title"></h2>
+    <p id="info-desc"></p>
+    <div id="info-tags"></div>
+    <button id="info-goto" class="goto-btn">Go There</button>
+  </div>
+
+  <div id="tooltip" class="hidden"></div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
