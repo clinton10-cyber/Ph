@@ -15,7 +15,6 @@ export class HUD {
 
     this._els = {
       loadScreen: document.getElementById('loading-screen'),
-      loaderBar: document.getElementById('loader-bar'),
       loaderStatus: document.getElementById('loader-status'),
       hud: document.getElementById('hud'),
       timeDisplay: document.getElementById('time-display'),
@@ -188,16 +187,13 @@ export class HUD {
     this._els.compassNeedle.style.transform = `rotate(${deg}deg)`;
   }
 
-  updateLoadingProgress(progress, status) {
-    this._els.loaderBar.style.width = `${Math.round(progress * 100)}%`;
-    if (status) this._els.loaderStatus.textContent = status;
-  }
+  // updateLoadingProgress removed — loader bar replaced by spinner
 
   hideLoadingScreen() {
-    this._els.loadScreen.classList.add('fade-out');
-    setTimeout(() => {
-      this._els.loadScreen.style.display = 'none';
-    }, 900);
+    if (this._els.loadScreen) {
+      this._els.loadScreen.classList.add('fade-out');
+      setTimeout(() => { this._els.loadScreen.style.display = 'none'; }, 700);
+    }
   }
 
   tick(delta) {

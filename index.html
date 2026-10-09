@@ -15,14 +15,15 @@
   </script>
 </head>
 <body>
+  <!-- Splash screen — no progress bar, just a spinner + city name -->
   <div id="loading-screen">
     <div class="loader-inner">
       <div class="loader-city-name">PORT HARCOURT</div>
       <div class="loader-subtitle">Rivers State, Nigeria</div>
-      <div class="loader-bar-wrap">
-        <div class="loader-bar" id="loader-bar"></div>
+      <div class="loader-spinner">
+        <div class="spinner-ring"></div>
       </div>
-      <div class="loader-status" id="loader-status">Initialising city engine...</div>
+      <div class="loader-status" id="loader-status">Starting city engine…</div>
     </div>
   </div>
 
@@ -39,14 +40,14 @@
     </div>
 
     <div id="hud-controls">
-      <button class="hud-btn" id="btn-overview" title="Bird's eye view">Overview</button>
-      <button class="hud-btn" id="btn-daynight" title="Toggle day/night">Day</button>
-      <button class="hud-btn" id="btn-map" title="Toggle map">Map</button>
-      <button class="hud-btn" id="btn-audio" title="Toggle audio">Audio Off</button>
+      <button class="hud-btn" id="btn-overview"  title="Bird's eye view">Overview</button>
+      <button class="hud-btn" id="btn-daynight"  title="Toggle day/night">Day</button>
+      <button class="hud-btn" id="btn-map"       title="Toggle map">Map</button>
+      <button class="hud-btn" id="btn-audio"     title="Toggle audio">Audio Off</button>
     </div>
 
     <div id="search-bar">
-      <input type="text" id="search-input" placeholder="Search landmarks..." autocomplete="off" />
+      <input type="text" id="search-input" placeholder="Search landmarks…" autocomplete="off" />
       <div id="search-results"></div>
     </div>
   </div>
